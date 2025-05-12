@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth';
 import { UsersModule } from './users/users.module';
 import { MedicalModule } from './medical/medical.module';
+import { DatabaseModule } from './database';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MedicalModule } from './medical/medical.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    DatabaseModule,
     AuthModule,
     UsersModule,
     MedicalModule,

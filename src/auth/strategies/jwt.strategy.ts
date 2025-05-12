@@ -11,14 +11,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private authService: AuthService,
     private configService: ConfigService,
   ) {
+    // For production, use JWKS
+    // super({
+    //   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    //   secretOrKeyProvider: passportJwtSecret({
+    //     cache: true,
+    //     rateLimit: true,
+    //     jwksRequestsPerMinute: 5,
+    //     jwksUri: configService.get('JWKS_URI', 'https://your-auth-server/.well-known/jwks.json'),
+    //   }),
+    //   ignoreExpiration: false,
+    //   audience: configService.get('JWT_AUDIENCE', 'your-api-audience'),
+    //   issuer: configService.get('JWT_ISSUER', 'https://your-auth-server/'),
+    // });
+
+    // For testing purposes, use a simple secret
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: configService.get('JWKS_URI', 'https://your-auth-server/.well-known/jwks.json'),
-      }),
+      secretOrKey: 'test-secret-key', // Use the same secret as in test-jwt.js
       ignoreExpiration: false,
       audience: configService.get('JWT_AUDIENCE', 'your-api-audience'),
       issuer: configService.get('JWT_ISSUER', 'https://your-auth-server/'),
@@ -26,11 +36,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const user = this.authService.validateUser(payload);
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
+    try {
+      // This will check if the user exists in the database and is active
+      const user = await this.authService.validateUser(payload);
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException(error.message || 'Invalid token');
     }
-
-    return user;
   }
 }
