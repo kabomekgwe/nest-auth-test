@@ -31,15 +31,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // Check if the user has an active session
-    const userId = payload.sub;
-    if (userId) {
-      const isSessionActive = await this.authService.validateSession(userId);
-      if (!isSessionActive) {
-        throw new UnauthorizedException('Session expired or invalid');
-      }
-    }
-
     return user;
   }
 }

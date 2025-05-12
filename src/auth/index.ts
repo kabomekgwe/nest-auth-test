@@ -12,10 +12,5 @@ export * from './enums/roles.enum';
 // Module
 export * from './auth.module';
 
-// Services
+// Service
 export * from './auth.service';
-export * from './services/refresh-token.service';
-export * from './services/session.service';
-
-// Controller
-export * from './auth.controller';
